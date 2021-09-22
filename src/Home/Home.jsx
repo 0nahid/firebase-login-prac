@@ -1,5 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 import React, { useState } from "react";
 import firebaseConfig from "../Firebase/Firebase";
 initializeApp(firebaseConfig);
@@ -20,7 +25,7 @@ const Home = () => {
       .then((result) => {
         const { displayName, email, photoURL } = result.user;
         const signedUser = {
-          isSignIn: true,
+          isSignedIn: true,
           name: displayName,
           email: email,
           photo: photoURL,
@@ -31,10 +36,35 @@ const Home = () => {
         console.log(error);
       });
   };
+  const handleSignOut = () => {
+    signOut(auth)
+      .then((res) => {
+        const signedUser = {
+          isSignedIn: false,
+          name: "",
+          email: "",
+          photo: "",
+        };
+        setUser(signedUser);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleSubmit = () => {
+    console.log("Submitted");
+  };
+
+  const handleChange = (e) => {
+    console.log(e.target.name , e.target.value);
+  };
 
   return (
     <div>
-      <button onClick={handleSignIn}>Sign In with Google</button>
+      {user.isSignedIn ? (
+        <button onClick={handleSignOut}> Sign Out</button>
+      ) : (
+        <button onClick={handleSignIn}>Sign In</button>
+      )}
       {user.isSignedIn && (
         <div>
           <p> Welcome, {user.name} </p>
@@ -46,6 +76,28 @@ const Home = () => {
           />
         </div>
       )}
+      <h1>Our own Authentication System</h1>
+      <form action="" onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="email"
+          id="input-email"
+          placeholder="Enter your email address"
+          onBlur={handleChange}
+          required
+        />{" "}
+        <br />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Enter your password"
+          onBlur={handleChange}
+          required
+        />{" "}
+        <br />
+        <input type="submit" value="Submit" />
+      </form>
     </div>
   );
 };
