@@ -1,10 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,} from "firebase/auth";
 import React, { useState } from "react";
 import firebaseConfig from "../Firebase/Firebase";
 initializeApp(firebaseConfig);
@@ -38,7 +33,7 @@ const Home = () => {
   };
   const handleSignOut = () => {
     signOut(auth)
-      .then((res) => {
+      .then(() => {
         const signedUser = {
           isSignedIn: false,
           name: "",
@@ -60,41 +55,19 @@ const Home = () => {
 
   return (
     <div>
-      {user.isSignedIn ? (
-        <button onClick={handleSignOut}> Sign Out</button>
-      ) : (
-        <button onClick={handleSignIn}>Sign In</button>
-      )}
+      {user.isSignedIn ? (<button onClick={handleSignOut}> Sign Out</button>) : (<button onClick={handleSignIn}>Sign In</button>)}
       {user.isSignedIn && (
         <div>
           <p> Welcome, {user.name} </p>
           <p>email: {user.email}</p>
-          <img
-            style={{ borderRadius: "50%" }}
-            src={user.photo}
-            alt={user.name}
-          />
+          <img style={{ borderRadius: "50%" }} src={user.photo} alt={user.name}/>
         </div>
       )}
       <h1>Our own Authentication System</h1>
       <form action="" onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          id="input-email"
-          placeholder="Enter your email address"
-          onBlur={handleChange}
-          required
-        />{" "}
+        <input type="email" name="email" id="input-email" placeholder="Enter your email address" onBlur={handleChange} required />{" "}
         <br />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Enter your password"
-          onBlur={handleChange}
-          required
-        />{" "}
+        <input type="password" name="password" id="password" placeholder="Enter your password" onBlur={handleChange} required />{" "}
         <br />
         <input type="submit" value="Submit" />
       </form>
@@ -103,3 +76,4 @@ const Home = () => {
 };
 
 export default Home;
+ 
