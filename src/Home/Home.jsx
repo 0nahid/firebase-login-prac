@@ -3,6 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 import React, { useState } from "react";
@@ -51,23 +52,39 @@ const Home = () => {
       .catch((error) => console.log(error));
   };
 
-  const handleSubmit = () => {
-    console.log("Submitted");
+  const handleSubmit = (e) => {
+    console.log(user.email, user.password);
+    if (user.email && user.password) {
+      createUserWithEmailAndPassword(auth, user.email, user.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+          // ..
+        });
+      console.log("submitting");
+    }
+    e.preventDefault();
   };
 
   const handleChange = (e) => {
-    let fromValidate = true;
+    let isFormValid = true;
     if (e.target.name === "email") {
       const isEmailValid = /\S+@\S+\.\S+/.test(e.target.value);
-      fromValidate = isEmailValid;
+      isFormValid = isEmailValid;
     }
     if (e.target.name === "password") {
       const isPasswordValid =
         e.target.value.length > 6 && e.target.value.length < 32;
       const passwordHasNumber = /\d{1}/.test(e.target.value);
-      fromValidate = isPasswordValid && passwordHasNumber;
+      isFormValid = isPasswordValid && passwordHasNumber;
     }
-    if (fromValidate) {
+    if (isFormValid) {
       const newUserInfo = { ...user };
       newUserInfo[e.target.name] = e.target.value;
       setUser(newUserInfo);
