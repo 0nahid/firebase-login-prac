@@ -46,6 +46,7 @@ const Home = () => {
           name: "",
           email: "",
           photo: "",
+          success: false,
         };
         setUser(signedUser);
       })
@@ -53,19 +54,22 @@ const Home = () => {
   };
 
   const handleSubmit = (e) => {
-    console.log(user.email, user.password);
     if (user.email && user.password) {
       createUserWithEmailAndPassword(auth, user.email, user.password)
         .then((userCredential) => {
           // Signed in
-          const user = userCredential.user;
-          console.log(user);
+          // const user = userCredential.user;
+          // console.log(user);
+          const newUserInfo = { ...user };
+          newUserInfo.error = "";
+          newUserInfo.success = true;
+          setUser(newUserInfo);
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
-          // ..
+          const newUserInfo = { ...user };
+          newUserInfo.error = "email already used";
+          newUserInfo.success = false;
+          setUser(newUserInfo);
         });
       console.log("submitting");
     }
@@ -96,7 +100,7 @@ const Home = () => {
       {user.isSignedIn ? (
         <button onClick={handleSignOut}> Sign Out</button>
       ) : (
-        <button onClick={handleSignIn}>Sign In</button>
+        <button onClick={handleSignIn}>Sign In With Google</button>
       )}
       {user.isSignedIn && (
         <div>
@@ -128,7 +132,8 @@ const Home = () => {
           placeholder="Enter your email address"
           onBlur={handleChange}
           required
-        />{" "}
+        />
+        {"  "} <span>{user.error}</span>
         <br />
         <input
           type="password"
