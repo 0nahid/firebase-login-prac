@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
+  GithubAuthProvider,
   signOut,
 } from "firebase/auth";
 import React, { useState } from "react";
@@ -12,6 +13,7 @@ initializeApp(firebaseConfig);
 
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
+const gitProvider = new GithubAuthProvider();
 
 const Home = () => {
   const [user, setUser] = useState({
@@ -71,9 +73,21 @@ const Home = () => {
           newUserInfo.success = false;
           setUser(newUserInfo);
         });
-      console.log("submitting");
     }
     e.preventDefault();
+  };
+
+  const handleGithubSignIn = (e) => {
+    signInWithPopup(auth, gitProvider)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode , errorMessage);
+      });
   };
 
   const handleChange = (e) => {
@@ -113,6 +127,7 @@ const Home = () => {
           />
         </div>
       )}
+      <button onClick={handleGithubSignIn}>Sign In with Github</button>
       <h1>Our own Authentication System</h1>
       <h1>User Name: {user.name}</h1>
       <h1>Email: {user.email}</h1>
@@ -133,7 +148,7 @@ const Home = () => {
           onBlur={handleChange}
           required
         />
-        {"  "} <span>{user.error}</span>
+        {"  "}
         <br />
         <input
           type="password"
@@ -146,6 +161,10 @@ const Home = () => {
         <br />
         <input type="submit" value="Submit" />
       </form>
+      {user.success && (
+        <p style={{ color: "green" }}>User successfully authenticated</p>
+      )}
+      {user.error && <p style={{ color: "red" }}>{user.error}</p>}
     </div>
   );
 };
