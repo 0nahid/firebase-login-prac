@@ -59,9 +59,6 @@ const Home = () => {
     if (user.email && user.password) {
       createUserWithEmailAndPassword(auth, user.email, user.password)
         .then((userCredential) => {
-          // Signed in
-          // const user = userCredential.user;
-          // console.log(user);
           const newUserInfo = { ...user };
           newUserInfo.error = "";
           newUserInfo.success = true;
@@ -81,12 +78,13 @@ const Home = () => {
     signInWithPopup(auth, gitProvider)
       .then((result) => {
         console.log(result);
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        console.log(credential);
       })
       .catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode , errorMessage);
+        console.log(errorCode, errorMessage);
       });
   };
 
@@ -114,7 +112,10 @@ const Home = () => {
       {user.isSignedIn ? (
         <button onClick={handleSignOut}> Sign Out</button>
       ) : (
-        <button onClick={handleSignIn}>Sign In With Google</button>
+        <div>
+          <button onClick={handleSignIn}>Sign In With Google</button>
+          <button onClick={handleGithubSignIn}>Sign In with Github</button>
+        </div>
       )}
       {user.isSignedIn && (
         <div>
@@ -127,7 +128,6 @@ const Home = () => {
           />
         </div>
       )}
-      <button onClick={handleGithubSignIn}>Sign In with Github</button>
       <h1>Our own Authentication System</h1>
       <h1>User Name: {user.name}</h1>
       <h1>Email: {user.email}</h1>
